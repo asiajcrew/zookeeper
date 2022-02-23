@@ -69,5 +69,8 @@
   "bugs": {
     "url": "https://github.com/asiajcrew/zookeeper/issues"
   },
-  "homepage": "https://github.com/asiajcrew/zookeeper#readme"
+  "homepage": "https://github.com/asiajcrew/zookeeper#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
 }
