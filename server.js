@@ -1,6 +1,7 @@
 const express = require('express');
 const PORT = process.env.PORT || 3001;
 const app = express();
+const { animals } = require('./data/animals')
 
 function filterByQuery(query, animalsArray) {
     let personalityTraitsArray = [];
@@ -39,6 +40,3 @@ app.get('/api/animals', (req, res) => {
 app.listen(PORT, () => {
     console.log(`API server now on port ${PORT}!`);
 });
-
-// WHY IS THE SYNTAX FOR "{ animals }" SPACED OUT LIKE THAT?
-const { animals } = require('./data/animals')
