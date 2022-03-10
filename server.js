@@ -99,8 +99,22 @@ function filterByQuery(query, animalsArray) {
         }
     });
 
-    // Copy the .html file from ./public/index.html and paste it in a new HTML page at thhe root of the folder using 
+    // Copy the .html file from ./public/index.html and paste it into a new HTML page at thhe root of the directory. 
     app.get('/', (req, res) => {
+        res.sendFile(path.join(__dirname, './public/index.html'));
+    });
+
+    // Copy the data from ./public/animals.htmland use it to create a new html file  called "animals" at the root of the directory.
+    app.get('/animals', (req, res) => {
+        res.sendFile(path.join(__dirname, './public/animals.html'));
+    });
+    // Copy the data from ./public/animals.htmland use it to create a new html file called "zookeepers" at the root of the directory.
+    app.get('/zookeepers', (req, res) => {
+        res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+    });
+
+    // the * symbol is a symbo put in place of any endpoints that have not been defined. (i.e if users attempts to go to "http://localhost:3001/test" then they will be directed to the homepage (./public/index.html or http://localhost:3001/))
+    app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, './public/index.html'));
     });
 
@@ -110,6 +124,7 @@ function filterByQuery(query, animalsArray) {
     
 
     // Questions for Chandler:
+    // Ensure that my comments are accurate
     // explain path.join
     // does res.sendFile mean that we are copying info and pasting it into a new file?
     // Explain the concept/ meaning/ purpose of middleware
