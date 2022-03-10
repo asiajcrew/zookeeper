@@ -9,6 +9,8 @@ const app = express();
 app.use(express.urlencoded({ extended: true}));
 // parse incoming JSON data
 app.use(express.json());
+// Make linked files/ assets (i.e. css, js scripts, etc.) available when loading the html in the browser (this illiminates the need for individual GET requests.)
+app.use(express.static('public'));
 // Both of the above middleware functions need to be set up every time you create a server that's looking to accept POST data.
 
 function filterByQuery(query, animalsArray) {
@@ -97,7 +99,21 @@ function filterByQuery(query, animalsArray) {
         }
     });
 
+    // Copy the .html file from ./public/index.html and paste it in a new HTML page at thhe root of the folder using 
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(__dirname, './public/index.html'));
+    });
+
     app.listen(PORT, () => {
         console.log(`API server now on port ${PORT}!`);
     });
     
+
+    // Questions for Chandler:
+    // explain path.join
+    // does res.sendFile mean that we are copying info and pasting it into a new file?
+    // Explain the concept/ meaning/ purpose of middleware
+    // Explain what a static file is
+    // IS "else"always needed when writting if/ else statements (refer to script.js line 40-41)
+    // What is the benifit of using fetch() method: GET/ POST and using just GET or POST (refer to 11.3.5 module "Use Fetch API to POST Data" section)
+

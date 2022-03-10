@@ -120,6 +120,16 @@
         "hungry"
       ],
       "id": "12"
+    },
+    {
+      "name": "test",
+      "species": "lion",
+      "diet": "herbivore",
+      "personalityTraits": [
+        "zany",
+        "anxious"
+      ],
+      "id": "13"
     }
   ]
 }
