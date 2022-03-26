@@ -1,134 +1,28 @@
 const express = require('express');
 const PORT = process.env.PORT || 3001;
-const { animals } = require('./data/animals');
-const fs = require('fs');
-const path =  require('path');
 const app = express();
+const apiRoutes = require('./routes/apiRoutes');
+const htmlRoutes = require('./routes/htmlRoutes');
 
-// parse incoming string or array data
+// parse (interpereting data) incoming string or array data
 app.use(express.urlencoded({ extended: true}));
 // parse incoming JSON data
 app.use(express.json());
 // Make linked files/ assets (i.e. css, js scripts, etc.) available when loading the html in the browser (this illiminates the need for individual GET requests.)
 app.use(express.static('public'));
-// Both of the above middleware functions need to be set up every time you create a server that's looking to accept POST data.
+// All of the above middleware functions need to be set up every time you code with express.js
+app.use('/api', apiRoutes);
+app.use('/', htmlRoutes);
 
-function filterByQuery(query, animalsArray) {
-    let personalityTraitsArray = [];
-    let filteredResults = animalsArray;
-    if (query.personalityTraits) {
-        if (typeof query.personalityTraits === 'string') {
-            personalityTraitsArray = [query.personalityTraits];
-        } else {
-            personalityTraitsArray = query.personalityTraits;
-        }
-        personalityTraitsArray.forEach(trait => {
-            filteredResults = filteredResults.filter(
-                animal => animal.personalityTraits.indexOf(trait) !== -1
-                );
-            });
-        }
-        if (query.diet) {
-            filteredResults = filteredResults.filter(animal => animal.diet === query.diet);
-        }
-        if (query.species) {
-            filteredResults = filteredResults.filter(animal => animal.species === query.species);
-        }
-        if (query.name) {
-            filteredResults = filteredResults.filter(animal => animal.name === query.name);
-        }
-        return filteredResults;
-    }
-    
-    function findById(id, animalsArray) {
-        const result = animalsArray.filter(animal => animal.id === id)[0];
-        return result;
-    }
+app.listen(PORT, () => {
+    console.log(`API server now on port ${PORT}!`);
+});
 
-    function createNewAnimal(body, animalsArray) {
-        const animal = body;
-        animalsArray.push(animal);
-        fs.writeFileSync(
-            path.join(__dirname, './data/animals.json'),
-            JSON.stringify({ animals: animalsArray }, null, 2)
-        );
-        return animal;
-    }
-
-    function validateAnimal(animal) {
-        if (!animal.name || typeof animal.name !== 'string') {
-            return false;
-        }
-        if (!animal.species || typeof animal.species !== 'string') {
-            return false;
-        }
-        if (!animal.diet || typeof animal.diet !== 'string') {
-            return false;
-        }
-        if (!animal.personalityTraits || !Array.isArray(animal.personalityTraits)) {
-            return false;
-        }
-        return true;
-    }
-
-    app.get('/api/animals', (req, res) => {
-        let results = animals;
-        if (req.query) {
-            results = filterByQuery(req.query, results);
-        }
-        console.log(req.query)
-        res.json(results);
-    });
-
-    app.get('/api/animals/:id', (req, res) => {
-        const result = findById(req.params.id, animals);
-        if (result) {
-            res.json(result);
-        } else {
-            res.send(404)
-        }
-    });
-    
-    app.post('/api/animals', (req, res) => {
-        req.body.id = animals.length.toString();
-        if (!validateAnimal(req.body)) {
-            res.status(400).send('The animal is not properly formatted.');
-        } else {
-            const animal = createNewAnimal(req.body, animals);
-            res.json(animal);
-        }
-    });
-
-    // Copy the .html file from ./public/index.html and paste it into a new HTML page at thhe root of the directory. 
-    app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, './public/index.html'));
-    });
-
-    // Copy the data from ./public/animals.htmland use it to create a new html file  called "animals" at the root of the directory.
-    app.get('/animals', (req, res) => {
-        res.sendFile(path.join(__dirname, './public/animals.html'));
-    });
-    // Copy the data from ./public/animals.htmland use it to create a new html file called "zookeepers" at the root of the directory.
-    app.get('/zookeepers', (req, res) => {
-        res.sendFile(path.join(__dirname, './public/zookeepers.html'));
-    });
-
-    // the * symbol is a symbo put in place of any endpoints that have not been defined. (i.e if users attempts to go to "http://localhost:3001/test" then they will be directed to the homepage (./public/index.html or http://localhost:3001/))
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, './public/index.html'));
-    });
-
-    app.listen(PORT, () => {
-        console.log(`API server now on port ${PORT}!`);
-    });
-    
-
-    // Questions for Chandler:
-    // Ensure that my comments are accurate
-    // explain path.join
-    // does res.sendFile mean that we are copying info and pasting it into a new file?
-    // Explain the concept/ meaning/ purpose of middleware
-    // Explain what a static file is
-    // IS "else"always needed when writting if/ else statements (refer to script.js line 40-41)
-    // What is the benifit of using fetch() method: GET/ POST and using just GET or POST (refer to 11.3.5 module "Use Fetch API to POST Data" section)
-
+// Questions for Chandler:
+// explain path.join === concatenates the first parameter of the rout.get request with the seconf parameter of the path.join method
+// does res.sendFile mean that we are copying info and pasting it into a new file (replacing/ overwritting whatever info was previously in that file) === yes!
+// Explain the concept/ meaning/ purpose of middleware === a checkpoint to ensure data meets specific criteria
+// Explain what a static file is === Files that are downloaded without modification (as it's being downloaded)
+// Is "else" always needed when writting if/ else statements? === if there is a return statement after the "if" then there is no need for an "else"
+// If I refactor my code by moving part of it to a new folder, what is the easiest way to check/ update all of my paths? (refer to 11.4.3 module) === instead of writting the code in one file then moving it, just start by writting the routes in the correct folder.
+// How do you determine how to name the module.exports? === name the module.export by the name of the function that you want to send out
