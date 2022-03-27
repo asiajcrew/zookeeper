@@ -5,7 +5,7 @@
   "main": "server.js",
   "npmScripts": "",
   "scripts": {
-    "test": "jest",
+    "test": "jest --transformIgnorePatterns \"node_modules/(?!@toolz/allow)/\" --env=jsdom",
     "start": "node server.js"
   },
   "repository": {
